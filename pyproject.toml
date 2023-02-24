@@ -22,7 +22,7 @@ dynamic = [
 ]
 dependencies = [
     "deltabot-cli @ git+https://github.com/deltachat-bot/deltabot-cli-py.git",
-    "aiohttp>=3.8.3",
+    "httpx>=0.23.3",
 ]
 
 [project.optional-dependencies]
