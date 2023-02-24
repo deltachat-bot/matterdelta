@@ -39,6 +39,7 @@ async def dc2mb(msg: AttrDict) -> None:
         sender = await msg.sender.get_snapshot()
         username = msg.override_sender_name or sender.display_name
         data = {"gateway": gateway, "username": username, "text": msg.text}
+        logging.debug("DC->MB %s", data)
         async with aiohttp.ClientSession(api_url, headers=headers) as session:
             async with session.post("/api/message", json=data):
                 pass
