@@ -69,5 +69,5 @@ async def listen_to_matterbridge(bot: Bot) -> None:
                         logging.debug(line)
                         await mb2dc(bot, json.loads(line))
         except Exception as ex:  # pylint: disable=W0703
-            await asyncio.sleep(15)
+            await asyncio.sleep(5)
             logging.exception(ex)
