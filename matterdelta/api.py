@@ -16,7 +16,7 @@ gateway2id = {}
 
 async def init_api(bot: Bot, config_dir: str) -> None:
     """Load matterbridge API configuration and start listening to the API endpoint."""
-    path = os.path.join(config_dir, "matterbridge.json")
+    path = os.path.join(config_dir, "config.json")
     if os.path.exists(path):
         with open(path, encoding="utf-8") as config:
             mb_config.update(json.load(config))

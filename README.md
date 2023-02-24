@@ -65,7 +65,7 @@ enable=true
 
 Add these to your existing Matterbridge config to set up an API instance that Matterdelta can connect to.
 
-### matterbridge.json
+### config.json
 
 ```
 {
