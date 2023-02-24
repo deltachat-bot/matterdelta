@@ -64,10 +64,13 @@ async def listen_to_matterbridge(bot: Bot) -> None:
     while True:
         try:
             async with aiohttp.ClientSession(api_url, headers=headers) as session:
-                async with session.get("/api/stream") as resp:
-                    async for line in resp.content:
-                        logging.debug(line)
-                        await mb2dc(bot, json.loads(line))
+                # use the /api/messages endpoint because /api/stream have issues:
+                # https://github.com/42wim/matterbridge/issues/1983
+                async with session.get("/api/messages") as resp:
+                    for msg in await resp.json():
+                        logging.debug(msg)
+                        await mb2dc(bot, msg)
+            await asyncio.sleep(1)
         except Exception as ex:  # pylint: disable=W0703
             await asyncio.sleep(5)
             logging.exception(ex)
