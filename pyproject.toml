@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "matterdelta"
+description = "Matterbridge API plugin for Delta Chat"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE.txt"}
+keywords = ["deltachat", "bot", "matterbridge", "bridge"]
+authors = [
+  {email = "adbenitez@hispanilandia.net"},
+  {name = "adbenitez"}
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+dynamic = [
+    "version"
+]
+dependencies = [
+    "deltabot-cli @ git+https://github.com/deltachat-bot/deltabot-cli-py.git",
+    "aiohttp>=3.8.3",
+]
+
+[project.optional-dependencies]
+fast = [
+    "aiodns>=3.0.0",
+    "cchardet>=2.1.7",
+]
+dev = [
+  "black",
+  "mypy",
+  "isort",
+  "pylint",
+  "pylama",
+  "pytest",
+]
+
+[project.scripts]
+matterdelta = "matterdelta:main"
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = "True"
