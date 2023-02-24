@@ -65,7 +65,9 @@ async def listen_to_matterbridge(bot: Bot) -> None:
     while True:
         try:
             async with httpx.AsyncClient() as client:
-                async with client.stream(method="GET", url=url, timeout=timeout) as res:
+                async with client.stream(
+                    method="GET", url=url, timeout=timeout, headers=headers
+                ) as res:
                     async for line in res.aiter_lines():
                         logging.debug(line)
                         await mb2dc(bot, json.loads(line))
