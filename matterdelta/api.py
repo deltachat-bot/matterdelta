@@ -4,7 +4,7 @@ import json
 import logging
 import os
 
-import httpx
+import aiohttp
 from deltabot_cli import AttrDict, Bot
 
 from .util import run_in_background
@@ -39,8 +39,9 @@ async def dc2mb(msg: AttrDict) -> None:
         sender = await msg.sender.get_snapshot()
         username = msg.override_sender_name or sender.display_name
         data = {"gateway": gateway, "username": username, "text": msg.text}
-        async with httpx.AsyncClient() as client:
-            await client.post(f"{api_url}/api/message", data=data, headers=headers)
+        async with aiohttp.ClientSession(api_url, headers=headers) as session:
+            async with session.post("/api/message", json=data):
+                pass
 
 
 async def mb2dc(bot: Bot, msg: dict) -> None:
@@ -58,17 +59,13 @@ async def listen_to_matterbridge(bot: Bot) -> None:
     """Process forever the streams of messages from matterbridge API"""
     logging.debug("Listening to matterbridge API...")
     api_url = mb_config["api"]["url"]
-    url = f"{api_url}/api/stream"
     token = mb_config["api"].get("token", "")
     headers = {"Authorization": f"Bearer {token}"} if token else None
-    timeout = httpx.Timeout(10, read=None)
     while True:
         try:
-            async with httpx.AsyncClient() as client:
-                async with client.stream(
-                    method="GET", url=url, timeout=timeout, headers=headers
-                ) as res:
-                    async for line in res.aiter_lines():
+            async with aiohttp.ClientSession(api_url, headers=headers) as session:
+                async with session.get("/api/stream") as resp:
+                    async for line in resp.content:
                         logging.debug(line)
                         await mb2dc(bot, json.loads(line))
         except Exception as ex:  # pylint: disable=W0703
