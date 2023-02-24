@@ -5,8 +5,9 @@ from argparse import Namespace
 from deltabot_cli import AttrDict, Bot, BotCli, EventType, const, events
 
 from .api import dc2mb, init_api
+from .util import get_log_level
 
-cli = BotCli("matterdelta")
+cli = BotCli("matterdelta", log_level=get_log_level())
 
 
 @cli.on_start
