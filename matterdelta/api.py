@@ -74,7 +74,7 @@ async def mb2dc(bot: Bot, msg: dict) -> None:
         return
     chat = bot.account.get_chat_by_id(chat_id)
     text = msg.get("text")
-    file = msg.get("Extra", {}).get("file", [{}])[0]
+    file = ((msg.get("Extra") or {}).get("file") or [{}])[0]
     if file:
         async with aiofiles.tempfile.TemporaryDirectory() as tmp_dir:
             filename = os.path.join(tmp_dir, file["Name"])
