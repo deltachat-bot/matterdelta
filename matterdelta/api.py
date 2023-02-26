@@ -38,7 +38,11 @@ async def dc2mb(msg: AttrDict) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else None
         sender = await msg.sender.get_snapshot()
         username = msg.override_sender_name or sender.display_name
-        text = msg.text
+        url = await upload_media(msg.file) if msg.file else ""
+        if url and msg.text:
+            text = f"{url} - {msg.text}"
+        else:
+            text = url or msg.text
         if msg.quote and mb_config.get("quoteFormat"):
             quotenick = (
                 msg.quote.get("override_sender_name")
@@ -87,3 +91,21 @@ async def listen_to_matterbridge(bot: Bot) -> None:
         except Exception as ex:  # pylint: disable=W0703
             await asyncio.sleep(5)
             logging.exception(ex)
+
+
+async def upload_media(path: str) -> str:
+    """Try to upload attachment"""
+    cmd = mb_config.get("mediaUploadCmd")
+    if not cmd:
+        return ""
+
+    process = await asyncio.create_subprocess_shell(
+        cmd.format(FILE=path), stdout=asyncio.subprocess.PIPE
+    )
+    if await process.wait() == 0 and process.stdout is not None:
+        url = await process.stdout.read()
+        try:
+            return url.decode().strip()
+        except UnicodeDecodeError:
+            pass
+    return ""
