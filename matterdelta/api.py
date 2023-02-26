@@ -45,6 +45,8 @@ async def dc2mb(msg: AttrDict) -> None:
             text = f"{url} - {msg.text}"
         else:
             text = url or msg.text
+        if not text:
+            return
         if msg.quote and mb_config.get("quoteFormat"):
             quotenick = (
                 msg.quote.get("override_sender_name")

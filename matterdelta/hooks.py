@@ -54,5 +54,5 @@ async def _bridge(event: AttrDict) -> None:
             "/id - send me this command in a group to get its chatId."
         )
         await msg.chat.send_text(text)
-    elif msg.text:
+    else:
         await dc2mb(msg)
