@@ -22,8 +22,8 @@ async def init_api(bot: Bot, config_dir: str) -> None:
             mb_config.update(json.load(config))
 
     for gateway in mb_config.get("gateways") or []:
-        gateway2id[gateway["gateway"]] = gateway["chat-id"]
-        id2gateway[gateway["chat-id"]] = gateway["gateway"]
+        gateway2id[gateway["gateway"]] = gateway["chatId"]
+        id2gateway[gateway["chatId"]] = gateway["gateway"]
 
     if len(mb_config.get("gateways") or []):
         run_in_background(listen_to_matterbridge(bot))
@@ -38,7 +38,19 @@ async def dc2mb(msg: AttrDict) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else None
         sender = await msg.sender.get_snapshot()
         username = msg.override_sender_name or sender.display_name
-        data = {"gateway": gateway, "username": username, "text": msg.text}
+        text = msg.text
+        if msg.quote and mb_config.get("quoteFormat"):
+            quotenick = (
+                msg.quote.get("override_sender_name")
+                or msg.quote.get("author_display_name")
+                or ""
+            )
+            text = mb_config["quoteFormat"].format(
+                MESSAGE=text,
+                QUOTENICK=quotenick,
+                QUOTEMESSAGE=" ".join(msg.quote.text.split()),
+            )
+        data = {"gateway": gateway, "username": username, "text": text}
         logging.debug("DC->MB %s", data)
         async with aiohttp.ClientSession(api_url, headers=headers) as session:
             async with session.post("/api/message", json=data):

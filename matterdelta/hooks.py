@@ -51,7 +51,7 @@ async def _bridge(event: AttrDict) -> None:
     if chat.chat_type == const.ChatType.SINGLE:
         text = (
             "**Available commands**\n\n"
-            "/id - send me this command in a group to get its chat-id."
+            "/id - send me this command in a group to get its chatId."
         )
         await msg.chat.send_text(text)
     elif msg.text:

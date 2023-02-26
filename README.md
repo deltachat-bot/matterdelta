@@ -71,19 +71,20 @@ Add these to your existing Matterbridge config to set up an API instance that Ma
 {
   "gateways":
   [
-    {"gateway": "gateway1", "chat-id": 1234}
+    {"gateway": "gateway1", "chatId": 1234}
   ],
   "api":
   {
     "url": "http://127.0.0.1:4242",
     "token": "MATTERBRIDGE_TOKEN",
-  }
+  },
+  "quoteFormat": "{MESSAGE} (Re: @{QUOTENICK}: {QUOTEMESSAGE:46})"
 }
 ```
 
 This file should be in Matterdelta's configuration directory, usually `~/.config/matterdelta/`
 in Linux-based systems.
 
-To get the `chat-id` of the chat you want to bridge, run the bot and add its address to your group,
+To get the `chatId` of the chat you want to bridge, run the bot and add its address to your Delta Chat group,
 then send `/id`in the group, the bot will reply with the chat id, then edit the configuration file
 and restart the bot.
