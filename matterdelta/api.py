@@ -65,7 +65,7 @@ async def mb2dc(bot: Bot, msg: dict) -> None:
     if not chat_id or not msg.get("text"):
         return
     chat = bot.account.get_chat_by_id(chat_id)
-    await chat.send_message(text=f"{msg['username']}: {msg['text']}")
+    await chat.send_message(text=msg["text"], override_sender_name=msg["username"])
 
 
 async def listen_to_matterbridge(bot: Bot) -> None:
