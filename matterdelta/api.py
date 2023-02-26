@@ -1,9 +1,11 @@
 """Matterbridge API interaction"""
 import asyncio
+import base64
 import json
 import logging
 import os
 
+import aiofiles
 import aiohttp
 from deltabot_cli import AttrDict, Bot
 
@@ -66,10 +68,22 @@ async def mb2dc(bot: Bot, msg: dict) -> None:
     if msg["event"]:
         return
     chat_id = gateway2id.get(msg["gateway"])
-    if not chat_id or not msg.get("text"):
+    if not chat_id:
         return
     chat = bot.account.get_chat_by_id(chat_id)
-    await chat.send_message(text=msg["text"], override_sender_name=msg["username"])
+    text = msg.get("text")
+    file = msg.get("Extra", {}).get("file", [{}])[0]
+    if file:
+        async with aiofiles.tempfile.TemporaryDirectory() as tmp_dir:
+            filename = os.path.join(tmp_dir, file["Name"])
+            data = base64.decodebytes(file["Data"].encode())
+            async with aiofiles.open(filename, mode="wb") as attachment:
+                await attachment.write(data)
+            await chat.send_message(
+                text=text, file=filename, override_sender_name=msg["username"]
+            )
+    elif text:
+        await chat.send_message(text=text, override_sender_name=msg["username"])
 
 
 async def listen_to_matterbridge(bot: Bot) -> None:
