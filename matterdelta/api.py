@@ -81,7 +81,7 @@ async def mb2dc(bot: Bot, msg: dict) -> None:
             data = base64.decodebytes(file["Data"].encode())
             async with aiofiles.open(filename, mode="wb") as attachment:
                 await attachment.write(data)
-            is_sticker = file["Name"].endswith((".tgs", ".webp")) and not text
+            is_sticker = file["Name"].endswith((".tgs", ".webp"))
             viewtype = const.ViewType.STICKER if is_sticker else None
             await chat.send_message(
                 text=text,
