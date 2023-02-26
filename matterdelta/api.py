@@ -76,6 +76,8 @@ async def mb2dc(bot: Bot, msg: dict) -> None:
     text = msg.get("text")
     file = ((msg.get("Extra") or {}).get("file") or [{}])[0]
     if file:
+        if text == file["Name"]:
+            text = ""
         async with aiofiles.tempfile.TemporaryDirectory() as tmp_dir:
             filename = os.path.join(tmp_dir, file["Name"])
             data = base64.decodebytes(file["Data"].encode())
