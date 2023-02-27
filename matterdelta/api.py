@@ -59,7 +59,9 @@ async def dc2mb(msg: AttrDict) -> None:
         if send_file:
             async with aiofiles.open(msg.file, mode="rb") as attachment:
                 enc_data = base64.standard_b64encode(await attachment.read()).decode()
-            data["Extra"] = {"file": [{"Name": msg.file_name, "Data": enc_data}]}
+            data["Extra"] = {
+                "file": [{"Name": msg.file_name, "Data": enc_data, "Comment": text}]
+            }
         logging.debug("DC->MB %s", data)
         async with aiohttp.ClientSession(api_url, headers=headers) as session:
             async with session.post("/api/message", json=data):
