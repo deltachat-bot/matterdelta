@@ -40,7 +40,7 @@ async def dc2mb(msg: AttrDict) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else None
         sender = await msg.sender.get_snapshot()
         username = msg.override_sender_name or sender.display_name
-        send_file = bool(msg.file and mb_config.get("uploadMedia"))
+        send_file = bool(msg.file and mb_config.get("setExtra"))
         if not msg.text and not send_file:
             return
         text = msg.text
