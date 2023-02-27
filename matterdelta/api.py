@@ -40,13 +40,10 @@ async def dc2mb(msg: AttrDict) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else None
         sender = await msg.sender.get_snapshot()
         username = msg.override_sender_name or sender.display_name
-        url = await upload_media(msg.file) if msg.file else ""
-        if url and msg.text:
-            text = f"{url} - {msg.text}"
-        else:
-            text = url or msg.text
-        if not text:
+        send_file = bool(msg.file and mb_config.get("uploadMedia"))
+        if not msg.text and not send_file:
             return
+        text = msg.text
         if msg.quote and mb_config.get("quoteFormat"):
             quotenick = (
                 msg.quote.get("override_sender_name")
@@ -59,6 +56,10 @@ async def dc2mb(msg: AttrDict) -> None:
                 QUOTEMESSAGE=" ".join(msg.quote.text.split()),
             )
         data = {"gateway": gateway, "username": username, "text": text}
+        if send_file:
+            async with aiofiles.open(msg.file, mode="rb") as attachment:
+                enc_data = base64.standard_b64encode(await attachment.read()).decode()
+            data["Extra"] = {"file": [{"Name": msg.file_name, "Data": enc_data}]}
         logging.debug("DC->MB %s", data)
         async with aiohttp.ClientSession(api_url, headers=headers) as session:
             async with session.post("/api/message", json=data):
@@ -114,21 +115,3 @@ async def listen_to_matterbridge(bot: Bot) -> None:
         except Exception as ex:  # pylint: disable=W0703
             await asyncio.sleep(5)
             logging.exception(ex)
-
-
-async def upload_media(path: str) -> str:
-    """Try to upload attachment"""
-    cmd = mb_config.get("mediaUploadCmd")
-    if not cmd:
-        return ""
-
-    process = await asyncio.create_subprocess_shell(
-        cmd.format(FILE=path), stdout=asyncio.subprocess.PIPE
-    )
-    if await process.wait() == 0 and process.stdout is not None:
-        url = await process.stdout.read()
-        try:
-            return url.decode().strip()
-        except UnicodeDecodeError:
-            pass
-    return ""

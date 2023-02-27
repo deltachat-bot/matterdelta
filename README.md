@@ -79,7 +79,6 @@ Add these to your existing Matterbridge config to set up an API instance that Ma
     "token": "MATTERBRIDGE_TOKEN",
   },
   "quoteFormat": "{MESSAGE} (re @{QUOTENICK}: {QUOTEMESSAGE:.46})",
-  "mediaUploadCmd": "curl -F'file=@{FILE} https://0x0.st"
 }
 ```
 
