@@ -25,7 +25,7 @@ Configure the bot's Delta Chat account:
 ```sh
 matterdelta init bot@example.com PASSWORD
 # optional:
-matterdelta set_avatar "/path/to/avatar.png"
+matterdelta config selfavatar "/path/to/avatar.png"
 matterdelta config displayname "Bridge Bot"
 matterdelta config selfstatus "Hi, I am a Delta Chat bot"
 ```
