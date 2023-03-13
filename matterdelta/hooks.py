@@ -11,7 +11,7 @@ cli = BotCli("matterdelta", log_level=get_log_level())
 
 
 @cli.on_init
-async def on_init(bot: Bot, _args: Namespace) -> None:
+async def _on_init(bot: Bot, _args: Namespace) -> None:
     if not await bot.account.get_config("displayname"):
         await bot.account.set_config("displayname", "Matterbridge Bot")
         status = "I am a Delta Chat bot, send me /help for more info"
