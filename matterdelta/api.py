@@ -40,8 +40,7 @@ async def dc2mb(msg: AttrDict) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else None
         sender = await msg.sender.get_snapshot()
         username = msg.override_sender_name or sender.display_name
-        send_file = bool(msg.file and mb_config.get("setExtra"))
-        if not msg.text and not send_file:
+        if not msg.text and not msg.file:
             return
         text = msg.text
         if msg.quote and mb_config.get("quoteFormat"):
@@ -56,7 +55,7 @@ async def dc2mb(msg: AttrDict) -> None:
                 QUOTEMESSAGE=" ".join(msg.quote.text.split()),
             )
         data = {"gateway": gateway, "username": username, "text": text}
-        if send_file:
+        if msg.file:
             async with aiofiles.open(msg.file, mode="rb") as attachment:
                 enc_data = base64.standard_b64encode(await attachment.read()).decode()
             data["Extra"] = {
