@@ -43,6 +43,11 @@ async def dc2mb(msg: AttrDict) -> None:
         if not msg.text and not msg.file:
             return
         text = msg.text
+        if text.split(maxsplit=1)[0] == "/me":
+            event = "user_action"
+            text = text[3:].strip()
+        else:
+            event = ""
         if msg.quote and mb_config.get("quoteFormat"):
             quotenick = (
                 msg.quote.get("override_sender_name")
@@ -54,7 +59,7 @@ async def dc2mb(msg: AttrDict) -> None:
                 QUOTENICK=quotenick,
                 QUOTEMESSAGE=" ".join(msg.quote.text.split()),
             )
-        data = {"gateway": gateway, "username": username, "text": text}
+        data = {"gateway": gateway, "username": username, "text": text, "event": event}
         if msg.file:
             async with aiofiles.open(msg.file, mode="rb") as attachment:
                 enc_data = base64.standard_b64encode(await attachment.read()).decode()
