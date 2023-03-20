@@ -69,13 +69,15 @@ async def dc2mb(msg: AttrDict) -> None:
 
 async def mb2dc(bot: Bot, msg: dict) -> None:
     """Send a message from matterbridge to the bridged Delta Chat group"""
-    if msg["event"]:
+    if msg["event"] not in ("", "user_action"):
         return
     chat_id = gateway2id.get(msg["gateway"])
     if not chat_id:
         return
     chat = bot.account.get_chat_by_id(chat_id)
-    text = msg.get("text")
+    text = msg.get("text") or ""
+    if msg["event"] == "user_action":
+        text = "/me " + text
     file = ((msg.get("Extra") or {}).get("file") or [{}])[0]
     if file:
         if text == file["Name"]:
