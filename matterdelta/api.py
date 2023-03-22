@@ -43,7 +43,7 @@ async def dc2mb(msg: AttrDict) -> None:
         if not msg.text and not msg.file:
             return
         text = msg.text
-        if text.split(maxsplit=1)[0] == "/me":
+        if text and text.split(maxsplit=1)[0] == "/me":
             event = "user_action"
             text = text[3:].strip()
         else:
