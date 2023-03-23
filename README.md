@@ -33,7 +33,7 @@ matterdelta config selfstatus "Hi, I am a Delta Chat bot"
 Running the bot:
 
 ```sh
-matterdelta
+matterdelta serve
 ```
 
 To see all available options run `matterdelta --help`
