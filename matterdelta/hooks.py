@@ -52,11 +52,11 @@ async def _id(event: AttrDict) -> None:
         await msg.chat.send_text(str(msg.chat_id))
 
 
-@cli.on(events.NewMessage(is_info=False, func=cli.is_not_known_command))
+@cli.on(events.NewMessage(is_info=False, is_bot=None, func=cli.is_not_known_command))
 async def _bridge(event: AttrDict) -> None:
     msg = event.message_snapshot
     chat = await msg.chat.get_basic_snapshot()
-    if chat.chat_type == const.ChatType.SINGLE:
+    if chat.chat_type == const.ChatType.SINGLE and not msg.is_bot:
         text = (
             "**Available commands**\n\n"
             "/id - send me this command in a group to get its chatId."
