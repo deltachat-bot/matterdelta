@@ -69,16 +69,14 @@ Add these to your existing Matterbridge config to set up an API instance that Ma
 
 ```
 {
-  "gateways":
-  [
+  "gateways": [
     {"gateway": "gateway1", "chatId": 1234}
   ],
-  "api":
-  {
+  "api": {
     "url": "http://127.0.0.1:4242",
-    "token": "MATTERBRIDGE_TOKEN",
+    "token": "MATTERBRIDGE_TOKEN"
   },
-  "quoteFormat": "{MESSAGE} (re @{QUOTENICK}: {QUOTEMESSAGE:.46})",
+  "quoteFormat": "{MESSAGE} (re @{QUOTENICK}: {QUOTEMESSAGE:.46})"
 }
 ```
 
