@@ -22,13 +22,11 @@ dynamic = [
 ]
 dependencies = [
     "deltabot-cli @ git+https://github.com/deltachat-bot/deltabot-cli-py.git",
-    "aiohttp>=3.8.3",
-    "aiofiles>=22.1.0",
+    "requests",
 ]
 
 [project.optional-dependencies]
 fast = [
-    "aiodns>=3.0.0",
     "cchardet>=2.1.7",
 ]
 dev = [
@@ -38,7 +36,7 @@ dev = [
   "pylint",
   "pylama",
   "pytest",
-  "types-aiofiles",
+  "types-requests",
 ]
 
 [project.scripts]
