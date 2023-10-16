@@ -1,5 +1,6 @@
 # Matterdelta
 
+[![Latest Release](https://img.shields.io/pypi/v/matterdelta.svg)](https://pypi.org/project/matterdelta)
 [![CI](https://github.com/deltachat-bot/matterdelta/actions/workflows/python-ci.yml/badge.svg)](https://github.com/deltachat-bot/matterdelta/actions/workflows/python-ci.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -9,7 +10,7 @@ Delta Chat group chats to the various chat services supported by Matterbridge.
 ## Install
 
 ```sh
-pip install git+https://github.com/deltachat-bot/matterdelta.git
+pip install matterdelta
 ```
 
 ### Installing deltachat-rpc-server
