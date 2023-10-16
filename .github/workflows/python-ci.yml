@@ -58,6 +58,7 @@ jobs:
         if: ${{ github.event_name == 'push' && steps.check-tag.outputs.match == 'true' }}
         uses: Roang-zero1/github-create-release-action@master
         with:
+          changelog_file: ""
           version_regex: ^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
