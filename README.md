@@ -13,12 +13,6 @@ Delta Chat group chats to the various chat services supported by Matterbridge.
 pip install matterdelta
 ```
 
-### Installing deltachat-rpc-server
-
-This package depends on a standalone Delta Chat RPC server `deltachat-rpc-server` program.
-To install it check:
-https://github.com/deltachat/deltachat-core-rust/tree/master/deltachat-rpc-server
-
 ## Usage
 
 Configure the bot's Delta Chat account:

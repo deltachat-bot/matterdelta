@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-version = "0.1.0"
+version = "0.2.0"
 name = "matterdelta"
 description = "Matterbridge API plugin for Delta Chat"
 readme = "README.md"
@@ -19,6 +19,7 @@ classifiers = [
 ]
 dependencies = [
     "deltabot-cli",
+    "deltachat-rpc-server",
     "requests",
 ]
 
