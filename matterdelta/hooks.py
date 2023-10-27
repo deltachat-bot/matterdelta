@@ -31,11 +31,11 @@ def _on_start(bot: Bot, args: Namespace) -> None:
 
 @cli.on(events.RawEvent)
 def _log_event(event: AttrDict) -> None:
-    if event.type == EventType.INFO:
+    if event.kind == EventType.INFO:
         logging.info(event.msg)
-    elif event.type == EventType.WARNING:
+    elif event.kind == EventType.WARNING:
         logging.warning(event.msg)
-    elif event.type == EventType.ERROR:
+    elif event.kind == EventType.ERROR:
         logging.error(event.msg)
 
 
