@@ -1,4 +1,5 @@
 """Matterbridge API interaction"""
+
 import base64
 import json
 import logging
@@ -8,11 +9,11 @@ import time
 from threading import Thread
 
 import requests
-from deltabot_cli import AttrDict, Bot, const
+from deltabot_cli import AttrDict, Bot, ViewType
 
 mb_config = {}
-id2gateway = {}
-gateway2id = {}
+chat2gateway = {}
+gateway2chat = {}
 
 
 def init_api(bot: Bot, config_dir: str) -> None:
@@ -23,24 +24,27 @@ def init_api(bot: Bot, config_dir: str) -> None:
             mb_config.update(json.load(config))
 
     for gateway in mb_config.get("gateways") or []:
-        gateway2id[gateway["gateway"]] = gateway["chatId"]
-        id2gateway[gateway["chatId"]] = gateway["gateway"]
+        chat = (gateway["accountId"], gateway["chatId"])
+        gateway2chat[gateway["gateway"]] = chat
+        chat2gateway[chat] = gateway["gateway"]
 
     if len(mb_config.get("gateways") or []):
         Thread(target=listen_to_matterbridge, args=(bot,)).start()
 
 
-def dc2mb(msg: AttrDict) -> None:
+def dc2mb(bot: Bot, accid: int, msg: AttrDict) -> None:
     """Send a Delta Chat message to the matterbridge side."""
-    gateway = id2gateway.get(msg.chat_id)
+    gateway = chat2gateway.get((accid, msg.chat_id))
     if gateway:
+        if not msg.text and not msg.file:  # ignore buggy empty messages
+            return
         api_url = mb_config["api"]["url"]
         token = mb_config["api"].get("token", "")
         headers = {"Authorization": f"Bearer {token}"} if token else None
-        sender = msg.sender.get_snapshot()
-        username = msg.override_sender_name or sender.display_name
-        if not msg.text and not msg.file:
-            return
+        username = (
+            msg.override_sender_name
+            or bot.rpc.get_contact(accid, msg.sender.id).display_name
+        )
         text = msg.text
         if text and text.split(maxsplit=1)[0] == "/me":
             event = "user_action"
@@ -49,9 +53,7 @@ def dc2mb(msg: AttrDict) -> None:
             event = ""
         if msg.quote and mb_config.get("quoteFormat"):
             quotenick = (
-                msg.quote.get("override_sender_name")
-                or msg.quote.get("author_display_name")
-                or ""
+                msg.quote.override_sender_name or msg.quote.author_display_name or ""
             )
             text = mb_config["quoteFormat"].format(
                 MESSAGE=text,
@@ -73,32 +75,30 @@ def mb2dc(bot: Bot, msg: dict) -> None:
     """Send a message from matterbridge to the bridged Delta Chat group"""
     if msg["event"] not in ("", "user_action"):
         return
-    chat_id = gateway2id.get(msg["gateway"])
-    if not chat_id:
+    accid, chat_id = gateway2chat.get(msg["gateway"]) or (0, 0)
+    if not accid or not chat_id:
         return
-    chat = bot.account.get_chat_by_id(chat_id)
     text = msg.get("text") or ""
     if msg["event"] == "user_action":
         text = "/me " + text
+    reply = {
+        "text": text,
+        "overrideSenderName": msg["username"],
+    }
     file = ((msg.get("Extra") or {}).get("file") or [{}])[0]
     if file:
         if text == file["Name"]:
             text = ""
         with tempfile.TemporaryDirectory() as tmp_dir:
-            filename = os.path.join(tmp_dir, file["Name"])
+            reply["file"] = os.path.join(tmp_dir, file["Name"])
             data = base64.decodebytes(file["Data"].encode())
-            with open(filename, mode="wb") as attachment:
+            with open(reply["file"], mode="wb") as attachment:
                 attachment.write(data)
-            is_sticker = file["Name"].endswith((".tgs", ".webp"))
-            viewtype = const.ViewType.STICKER if is_sticker else None
-            chat.send_message(
-                text=text,
-                file=filename,
-                viewtype=viewtype,
-                override_sender_name=msg["username"],
-            )
+            if file["Name"].endswith((".tgs", ".webp")):
+                reply["viewtype"] = ViewType.STICKER
+            bot.rpc.send_msg(accid, chat_id, reply)
     elif text:
-        chat.send_message(text=text, override_sender_name=msg["username"])
+        bot.rpc.send_msg(accid, chat_id, reply)
 
 
 def listen_to_matterbridge(bot: Bot) -> None:

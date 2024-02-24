@@ -15,24 +15,24 @@ jobs:
       matrix:
         python-version: ['3.8', '3.11']
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install ".[dev]"
-    - name: Check code with black
-      run: |
-        black --check .
-    - name: Lint code
-      run: |
-        pylama
-    - name: Test with pytest
-      run: |
-        #pytest
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install '.[dev]'
+      - name: Check code with black
+        run: |
+          black --check .
+      - name: Lint code
+        run: |
+          pylama
+      - name: Test with pytest
+        run: |
+          #pytest
 
   deploy:
     needs: test
@@ -51,6 +51,6 @@ jobs:
         uses: casperdcl/deploy-pypi@v2
         with:
           password: ${{ secrets.PYPI_TOKEN }}
-          pip: true
+          build: true
           # only upload if a tag is pushed (otherwise just build & check)
           upload: ${{ github.event_name == 'push' && steps.check-tag.outputs.match == 'true' }}

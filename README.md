@@ -19,13 +19,20 @@ Configure the bot's Delta Chat account:
 
 ```sh
 matterdelta init bot@example.com PASSWORD
-# optional:
+```
+
+You can run `matterdelta init` several times to add multiple different accounts to the bot
+so it can be reached in more than one email address.
+
+The bot's display name, avatar and status/signature can also be tweaked:
+
+```
 matterdelta config selfavatar "/path/to/avatar.png"
 matterdelta config displayname "Bridge Bot"
 matterdelta config selfstatus "Hi, I am a Delta Chat bot"
 ```
 
-Running the bot:
+To run the bot so it starts processing messages:
 
 ```sh
 matterdelta serve
@@ -65,7 +72,7 @@ Add these to your existing Matterbridge config to set up an API instance that Ma
 ```
 {
   "gateways": [
-    {"gateway": "gateway1", "chatId": 1234}
+    {"gateway": "gateway1", "accountId": 1, "chatId": 1234}
   ],
   "api": {
     "url": "http://127.0.0.1:4242",
@@ -78,6 +85,6 @@ Add these to your existing Matterbridge config to set up an API instance that Ma
 This file should be in Matterdelta's configuration directory, usually `~/.config/matterdelta/`
 in Linux-based systems.
 
-To get the `chatId` of the chat you want to bridge, run the bot and add its address to your Delta Chat group,
-then send `/id`in the group, the bot will reply with the chat id, then edit the configuration file
-and restart the bot.
+To get the `accountId` and `chatId` of the chat you want to bridge,
+run the bot and add its address to your Delta Chat group, then send `/id` in the group,
+the bot will reply with the account and chat id, then edit the configuration file and restart the bot.

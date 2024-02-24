@@ -1,4 +1,5 @@
 """Matterdelta bot."""
+
 from .hooks import cli
 
 
