@@ -14,7 +14,7 @@ authors = [
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "Programming Language :: Python"
+  "Programming Language :: Python",
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 dependencies = [
