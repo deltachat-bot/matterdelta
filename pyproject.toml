@@ -8,7 +8,6 @@ description = "Matterbridge API plugin for Delta Chat"
 dynamic = ["version"]
 readme = "README.md"
 requires-python = ">=3.8"
-license = {file = "LICENSE.txt"}
 keywords = ["deltachat", "bot", "matterbridge", "bridge"]
 authors = [
   {name = "adbenitez", email = "adb@merlinux.eu"},
@@ -16,6 +15,7 @@ authors = [
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python"
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 dependencies = [
     "deltabot-cli>=3.0.0,<4.0",
