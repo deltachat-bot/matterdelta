@@ -13,9 +13,8 @@ from deltabot_cli import (
 )
 
 from .api import dc2mb, init_api
-from .util import get_log_level
 
-cli = BotCli("matterdelta", log_level=get_log_level())
+cli = BotCli("matterdelta")
 
 
 @cli.on_init
@@ -26,6 +25,7 @@ def _on_init(bot: Bot, _args: Namespace) -> None:
             status = "I am a Delta Chat bot, send me /help for more info"
             bot.rpc.set_config(accid, "selfstatus", status)
             bot.rpc.set_config(accid, "delete_server_after", "1")
+            bot.rpc.set_config(accid, "delete_device_after", str(60 * 60 * 24 * 30))
 
 
 @cli.on_start
@@ -36,7 +36,7 @@ def _on_start(bot: Bot, args: Namespace) -> None:
 @cli.on(events.RawEvent)
 def _log_event(bot: Bot, accid: int, event: AttrDict) -> None:
     if event.kind == EventType.INFO:
-        bot.logger.info(event.msg)
+        bot.logger.debug(event.msg)
     elif event.kind == EventType.WARNING:
         bot.logger.warning(event.msg)
     elif event.kind == EventType.ERROR:
@@ -74,6 +74,8 @@ def _id(bot: Bot, accid: int, event: AttrDict) -> None:
 
 def _send_help(bot: Bot, accid: int, chatid: int) -> None:
     text = (
+        "I'm a bot, I allow to bridge Delta Chat groups with groups in other platforms."
+        " Only the bot administrator can bridge groups.\n"
         "**Available commands**\n\n"
         "/id - send me this command in a group to get its ID."
     )
