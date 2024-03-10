@@ -75,7 +75,7 @@ def _id(bot: Bot, accid: int, event: AttrDict) -> None:
 def _send_help(bot: Bot, accid: int, chatid: int) -> None:
     text = (
         "I'm a bot, I allow to bridge Delta Chat groups with groups in other platforms."
-        " Only the bot administrator can bridge groups.\n"
+        " Only the bot administrator can bridge groups.\n\n"
         "**Available commands**\n\n"
         "/id - send me this command in a group to get its ID."
     )
