@@ -2,7 +2,6 @@
 
 import base64
 import json
-import logging
 import tempfile
 import time
 from pathlib import Path
@@ -71,7 +70,7 @@ def dc2mb(bot: Bot, accid: int, msg: AttrDict) -> None:
         headers = {"Authorization": f"Bearer {token}"} if token else None
         for gateway in gateways:
             data["gateway"] = gateway
-            logging.debug("DC->MB %s", data)
+            bot.logger.debug("DC->MB %s", data)
             if api_url:
                 requests.post(
                     api_url + "/api/message", json=data, headers=headers, timeout=60
@@ -113,7 +112,7 @@ def mb2dc(bot: Bot, msg: dict, exclude: tuple[int, int] = (0, 0)) -> None:
 
 def listen_to_matterbridge(bot: Bot) -> None:
     """Process forever the streams of messages from matterbridge API"""
-    logging.debug("Listening to matterbridge API...")
+    bot.logger.debug("Listening to matterbridge API...")
     api_url = mb_config["api"]["url"]
     token = mb_config["api"].get("token", "")
     headers = {"Authorization": f"Bearer {token}"} if token else None
@@ -124,9 +123,9 @@ def listen_to_matterbridge(bot: Bot) -> None:
                 # https://github.com/42wim/matterbridge/issues/1983
                 with session.get(api_url + "/api/messages", headers=headers) as resp:
                     for msg in resp.json():
-                        logging.debug(msg)
+                        bot.logger.debug(msg)
                         mb2dc(bot, msg)
                 time.sleep(1)
             except Exception as ex:  # pylint: disable=W0703
-                logging.exception(ex)
+                bot.logger.exception(ex)
                 time.sleep(15)
