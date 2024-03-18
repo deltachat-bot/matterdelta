@@ -78,7 +78,7 @@ def dc2mb(bot: Bot, accid: int, msg: AttrDict) -> None:
             mb2dc(bot, data, (accid, msg.chat_id))
 
 
-def mb2dc(bot: Bot, msg: dict, exclude: tuple[int, int] = (0, 0)) -> None:
+def mb2dc(bot: Bot, msg: dict, exclude: Tuple[int, int] = (0, 0)) -> None:
     """Send a message from matterbridge to the bridged Delta Chat group"""
     if msg["event"] not in ("", "user_action"):
         return
