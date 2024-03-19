@@ -9,7 +9,7 @@ from threading import Thread
 from typing import Dict, List, Tuple
 
 import requests
-from deltabot_cli import AttrDict, Bot, ViewType
+from deltabot_cli import AttrDict, Bot, JsonRpcError, ViewType
 
 mb_config = {}
 chat2gateway: Dict[Tuple[int, int], List[str]] = {}
@@ -78,7 +78,7 @@ def dc2mb(bot: Bot, accid: int, msg: AttrDict) -> None:
             mb2dc(bot, data, (accid, msg.chat_id))
 
 
-def mb2dc(bot: Bot, msg: dict, exclude: Tuple[int, int] = (0, 0)) -> None:
+def mb2dc(bot: Bot, msg: dict, exclude: Tuple[int, int] = (0, 0)) -> None:  # noqa: C901
     """Send a message from matterbridge to the bridged Delta Chat group"""
     if msg["event"] not in ("", "user_action"):
         return
@@ -104,10 +104,16 @@ def mb2dc(bot: Bot, msg: dict, exclude: Tuple[int, int] = (0, 0)) -> None:
             if file["Name"].endswith((".tgs", ".webp")):
                 reply["viewtype"] = ViewType.STICKER
             for accid, chat_id in chats:
-                bot.rpc.send_msg(accid, chat_id, reply)
+                try:
+                    bot.rpc.send_msg(accid, chat_id, reply)
+                except JsonRpcError as ex:
+                    bot.logger.exception(ex)
     elif text:
         for accid, chat_id in chats:
-            bot.rpc.send_msg(accid, chat_id, reply)
+            try:
+                bot.rpc.send_msg(accid, chat_id, reply)
+            except JsonRpcError as ex:
+                bot.logger.exception(ex)
 
 
 def listen_to_matterbridge(bot: Bot) -> None:
