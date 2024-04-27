@@ -6,6 +6,7 @@ build
 dist
 .eggs
 *.egg-info
+*/_version.py
 
 *~
 .#*

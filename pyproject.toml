@@ -18,9 +18,12 @@ classifiers = [
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 dependencies = [
-    "deltabot-cli>=5.0.0,<6.0",
+    "deltabot-cli>=6.1.0,<7.0",
     "requests",
 ]
+
+[project.urls]
+Homepage = "https://github.com/deltachat-bot/matterdelta"
 
 [project.optional-dependencies]
 fast = [
@@ -41,6 +44,7 @@ matterdelta = "matterdelta:main"
 
 [tool.setuptools_scm]
 # can be empty if no extra settings are needed, presence enables setuptools_scm
+version_file = "matterdelta/_version.py"
 
 [tool.isort]
 profile = "black"

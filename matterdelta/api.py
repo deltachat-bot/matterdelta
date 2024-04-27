@@ -9,7 +9,7 @@ from threading import Thread
 from typing import Dict, List, Tuple
 
 import requests
-from deltabot_cli import AttrDict, Bot, JsonRpcError, ViewType
+from deltachat2 import Bot, JsonRpcError, Message, MessageViewtype, MsgData
 
 mb_config = {}
 chat2gateway: Dict[Tuple[int, int], List[str]] = {}
@@ -33,7 +33,7 @@ def init_api(bot: Bot, config_dir: str) -> None:
         Thread(target=listen_to_matterbridge, args=(bot,), daemon=True).start()
 
 
-def dc2mb(bot: Bot, accid: int, msg: AttrDict) -> None:
+def dc2mb(bot: Bot, accid: int, msg: Message) -> None:
     """Send a Delta Chat message to the matterbridge side."""
     if not msg.text and not msg.file:  # ignore buggy empty messages
         return
@@ -88,21 +88,21 @@ def mb2dc(bot: Bot, msg: dict, exclude: Tuple[int, int] = (0, 0)) -> None:  # no
     text = msg.get("text") or ""
     if msg["event"] == "user_action":
         text = "/me " + text
-    reply = {
-        "text": text,
-        "overrideSenderName": msg["username"],
-    }
+    reply = MsgData(
+        text=text,
+        override_sender_name=msg["username"],
+    )
     file = ((msg.get("Extra") or {}).get("file") or [{}])[0]
     if file:
         if text == file["Name"]:
             text = ""
         with tempfile.TemporaryDirectory() as tmp_dir:
-            reply["file"] = str(Path(tmp_dir, file["Name"]))
+            reply.file = str(Path(tmp_dir, file["Name"]))
             data = base64.decodebytes(file["Data"].encode())
-            with open(reply["file"], mode="wb") as attachment:
+            with open(reply.file, mode="wb") as attachment:
                 attachment.write(data)
             if file["Name"].endswith((".tgs", ".webp")):
-                reply["viewtype"] = ViewType.STICKER
+                reply.viewtype = MessageViewtype.STICKER
             for accid, chat_id in chats:
                 try:
                     bot.rpc.send_msg(accid, chat_id, reply)
