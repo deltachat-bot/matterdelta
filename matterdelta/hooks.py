@@ -25,7 +25,7 @@ def _on_init(bot: Bot, args: Namespace) -> None:
     ]
     for accid in bot.rpc.get_all_account_ids():
         if not bot.rpc.get_config(accid, "displayname"):
-            bot.rpc.set_config(accid, "displayname", "Matterbridge Bot")
+            bot.rpc.set_config(accid, "displayname", "Bridge Bot")
             status = "I am a Delta Chat bot, send me /help for more info"
             bot.rpc.set_config(accid, "selfstatus", status)
             bot.rpc.set_config(accid, "delete_device_after", str(60 * 60 * 24 * 30))
