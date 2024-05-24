@@ -3,7 +3,17 @@
 from argparse import Namespace
 
 from deltabot_cli import BotCli
-from deltachat2 import Bot, ChatType, CoreEvent, EventType, MsgData, NewMsgEvent, events
+from deltachat2 import (
+    Bot,
+    ChatType,
+    CoreEvent,
+    EventType,
+    JsonRpcError,
+    MsgData,
+    NewMsgEvent,
+    events,
+)
+from deltachat2.types import SpecialContactId
 from rich.logging import RichHandler
 
 from ._version import __version__
@@ -60,7 +70,12 @@ def _bridge(bot: Bot, accid: int, event: NewMsgEvent) -> None:
     chat = bot.rpc.get_basic_chat_info(accid, msg.chat_id)
     if chat.chat_type == ChatType.SINGLE and not msg.is_bot:
         bot.rpc.markseen_msgs(accid, [msg.id])
-        _send_help(bot, accid, msg.chat_id)
+        try:
+            community = bot.rpc.get_config(accid, "is_community") == "1"
+        except JsonRpcError:
+            community = False
+        if not community or msg.from_id > SpecialContactId.LAST_SPECIAL:
+            _send_help(bot, accid, msg.chat_id)
     else:
         dc2mb(bot, accid, msg)
 
