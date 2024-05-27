@@ -74,7 +74,7 @@ def _bridge(bot: Bot, accid: int, event: NewMsgEvent) -> None:
             community = bot.rpc.get_config(accid, "is_community") == "1"
         except JsonRpcError:
             community = False
-        if not community or msg.from_id > SpecialContactId.LAST_SPECIAL:
+        if not community:
             _send_help(bot, accid, msg.chat_id)
     else:
         dc2mb(bot, accid, msg)
