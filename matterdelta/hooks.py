@@ -13,7 +13,6 @@ from deltachat2 import (
     NewMsgEvent,
     events,
 )
-from deltachat2.types import SpecialContactId
 from rich.logging import RichHandler
 
 from ._version import __version__
@@ -59,7 +58,8 @@ def _log_event(bot: Bot, accid: int, event: CoreEvent) -> None:
             if not bot.rpc.get_contact(accid, event.contact_id).is_bot:
                 bot.logger.debug("QR scanned by contact id=%s", event.contact_id)
                 chatid = bot.rpc.create_chat_by_contact_id(accid, event.contact_id)
-                _send_help(bot, accid, chatid)
+                if not is_community(bot, accid):
+                    _send_help(bot, accid, chatid)
 
 
 @cli.on(events.NewMessage(is_info=False, is_bot=None))
@@ -70,11 +70,7 @@ def _bridge(bot: Bot, accid: int, event: NewMsgEvent) -> None:
     chat = bot.rpc.get_basic_chat_info(accid, msg.chat_id)
     if chat.chat_type == ChatType.SINGLE and not msg.is_bot:
         bot.rpc.markseen_msgs(accid, [msg.id])
-        try:
-            community = bot.rpc.get_config(accid, "is_community") == "1"
-        except JsonRpcError:
-            community = False
-        if not community:
+        if not is_community(bot, accid):
             _send_help(bot, accid, msg.chat_id)
     else:
         dc2mb(bot, accid, msg)
@@ -101,3 +97,11 @@ def _send_help(bot: Bot, accid: int, chatid: int) -> None:
         "/id - send me this command in a group to get its ID."
     )
     bot.rpc.send_msg(accid, chatid, MsgData(text=text))
+
+
+def is_community(bot: Bot, accid: int) -> bool:
+    """Return True if this is a community account."""
+    try:
+        return bot.rpc.get_config(accid, "is_community") == "1"
+    except JsonRpcError:
+        return False
