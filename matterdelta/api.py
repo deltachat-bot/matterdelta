@@ -50,8 +50,8 @@ def dc2mb(bot: Bot, accid: int, msg: Message) -> None:
         else:
             event = ""
         if msg.quote and mb_config.get("quoteFormat"):
-            quotenick = (
-                msg.quote.override_sender_name or msg.quote.author_display_name or ""
+            quotenick = msg.quote.get(
+                "override_sender_name", msg.quote.get("author_display_name", "")
             )
             text = mb_config["quoteFormat"].format(
                 MESSAGE=text,
