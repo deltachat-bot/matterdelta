@@ -1,0 +1,27 @@
+strictness: medium
+test-warnings: true
+doc-warnings: false
+
+ignore-paths:
+  - docs
+  - build
+
+ignore-patterns:
+  - (^|/)skip(this)?(/|$)
+
+pycodestyle:
+  options:
+    max-line-length: 100
+
+# pylint:
+#   disable:
+#     - too-many-locals
+#     - too-many-branches
+#     - too-many-positional-arguments
+#     - too-many-arguments
+
+mccabe:
+  run: false
+
+mypy:
+  run: true
