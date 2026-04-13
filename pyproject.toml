@@ -31,11 +31,8 @@ fast = [
 ]
 dev = [
   "black",
-  "mypy",
   "isort",
-  "pylint",
-  "pylama",
-  "pytest",
+  "prospector[with_mypy]",
   "types-requests",
 ]
 
