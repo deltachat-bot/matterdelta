@@ -18,11 +18,8 @@ pip install matterdelta
 Configure the bot's Delta Chat account:
 
 ```sh
-matterdelta init bot@example.com PASSWORD
+matterdelta init dcaccount:nine.testrun.org
 ```
-
-You can run `matterdelta init` several times to add multiple different accounts to the bot
-so it can be reached in more than one email address.
 
 The bot's display name, avatar and status/signature can also be tweaked:
 
